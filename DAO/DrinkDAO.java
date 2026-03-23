@@ -2,63 +2,54 @@ package DAO;
 
 import Entity.Drink;
 import Util.JdbcUtil;
+
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrinkDAO implements CrudDAO<Drink, Integer> {
+public class DrinkDAO {
 
-    // Thêm đồ uống
-    @Override
-    public void insert(Drink entity) {
+    public int create(Drink d) {
         String sql = "INSERT INTO Drinks(typeId, drinkName, cost, image, [describe]) VALUES (?, ?, ?, ?, ?)";
         try {
-            JdbcUtil.executeUpdate(sql,
-                    entity.getTypeId(),
-                    entity.getDrinkName(),
-                    entity.getCost(),
-                    entity.getImage(),
-                    entity.getDescribe()
-            );
+            return JdbcUtil.executeUpdate(sql,
+                    d.getTypeId(),
+                    d.getDrinkName(),
+                    d.getCost(),
+                    d.getImage(),
+                    d.getDescribe());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+        return 0;
     }
 
-    // Cập nhật đồ uống
-    @Override
-    public void update(Drink entity) {
-        String sql = "UPDATE Drinks SET typeId = ?, drinkName = ?, cost = ?, image = ?, [describe] = ? WHERE drinkId = ?";
+    public int update(Drink d) {
+        String sql = "UPDATE Drinks SET typeId=?, drinkName=?, cost=?, image=?, [describe]=? WHERE drinkId=?";
         try {
-            JdbcUtil.executeUpdate(sql,
-                    entity.getTypeId(),
-                    entity.getDrinkName(),
-                    entity.getCost(),
-                    entity.getImage(),
-                    entity.getDescribe(),
-                    entity.getDrinkId()
-            );
+            return JdbcUtil.executeUpdate(sql,
+                    d.getTypeId(),
+                    d.getDrinkName(),
+                    d.getCost(),
+                    d.getImage(),
+                    d.getDescribe(),
+                    d.getDrinkId());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+        return 0;
     }
 
-    // Xóa đồ uống
-    @Override
-    public void delete(Integer id) {
-        String sql = "DELETE FROM Drinks WHERE drinkId = ?";
+    public int delete(int id) {
+        String sql = "DELETE FROM Drinks WHERE drinkId=?";
         try {
-            JdbcUtil.executeUpdate(sql, id);
+            return JdbcUtil.executeUpdate(sql, id);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+        return 0;
     }
 
-    // Lấy toàn bộ danh sách
-    @Override
     public List<Drink> findAll() {
         List<Drink> list = new ArrayList<>();
         String sql = "SELECT * FROM Drinks";
@@ -66,15 +57,14 @@ public class DrinkDAO implements CrudDAO<Drink, Integer> {
         try {
             ResultSet rs = JdbcUtil.executeQuery(sql);
             while (rs.next()) {
-                Drink drink = new Drink(
+                list.add(new Drink(
                         rs.getInt("drinkId"),
                         rs.getInt("typeId"),
                         rs.getString("drinkName"),
                         rs.getBigDecimal("cost"),
                         rs.getString("image"),
                         rs.getString("describe")
-                );
-                list.add(drink);
+                ));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,10 +72,8 @@ public class DrinkDAO implements CrudDAO<Drink, Integer> {
         return list;
     }
 
-    // Lấy 1 đồ uống theo ID
-    @Override
-    public Drink findById(Integer id) {
-        String sql = "SELECT * FROM Drinks WHERE drinkId = ?";
+    public Drink findById(int id) {
+        String sql = "SELECT * FROM Drinks WHERE drinkId=?";
         try {
             ResultSet rs = JdbcUtil.executeQuery(sql, id);
             if (rs.next()) {

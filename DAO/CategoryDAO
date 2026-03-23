@@ -1,0 +1,76 @@
+package DAO;
+
+import java.sql.*;
+import java.util.*;
+import Entity.Category;
+import Util.JdbcUtil;
+
+public class CategoryDAO implements CrudDAO<Category, Integer> {
+
+    public int create(Category c) {
+        String sql = "INSERT INTO Categories(name, active) VALUES (?, ?)";
+        try {
+            return JdbcUtil.executeUpdate(sql, c.getName(), c.isActive());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int update(Category c) {
+        String sql = "UPDATE Categories SET name=?, active=? WHERE id=?";
+        try {
+            return JdbcUtil.executeUpdate(sql, c.getName(), c.isActive(), c.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int delete(int id) {
+        String sql = "DELETE FROM Categories WHERE id=?";
+        try {
+            return JdbcUtil.executeUpdate(sql, id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public List<Category> findAll() {
+        List<Category> list = new ArrayList<>();
+        String sql = "SELECT * FROM Categories";
+
+        try {
+            ResultSet rs = JdbcUtil.executeQuery(sql);
+            while (rs.next()) {
+                list.add(new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getBoolean("active")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public Category findById(int id) {
+        String sql = "SELECT * FROM Categories WHERE id=?";
+        try {
+            ResultSet rs = JdbcUtil.executeQuery(sql, id);
+            if (rs.next()) {
+                return new Category(
+                        rs.getInt("id"),
+                        rs.getString("name"),
+                        rs.getBoolean("active")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+}

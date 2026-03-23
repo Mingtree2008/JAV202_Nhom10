@@ -7,52 +7,49 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BillDetailDAO implements CrudDAO<BillDetail, Integer> {
+public class BillDetailDAO {
 
-    @Override
-    public void insert(BillDetail entity) {
+    public int create(BillDetail bd) {
         String sql = "INSERT INTO BillDetails(billId, drinkId, quantity, unitPrice, price) VALUES (?, ?, ?, ?, ?)";
         try {
-            JdbcUtil.executeUpdate(sql,
-                    entity.getBillId(),
-                    entity.getDrinkId(),
-                    entity.getQuantity(),
-                    entity.getUnitPrice(),
-                    entity.getPrice()
-            );
+            return JdbcUtil.executeUpdate(sql,
+                    bd.getBillId(),
+                    bd.getDrinkId(),
+                    bd.getQuantity(),
+                    bd.getUnitPrice(),
+                    bd.getPrice());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
-    @Override
-    public void update(BillDetail entity) {
-        String sql = "UPDATE BillDetails SET billId = ?, drinkId = ?, quantity = ?, unitPrice = ?, price = ? WHERE billDetailId = ?";
+    public int update(BillDetail bd) {
+        String sql = "UPDATE BillDetails SET billId=?, drinkId=?, quantity=?, unitPrice=?, price=? WHERE billDetailId=?";
         try {
-            JdbcUtil.executeUpdate(sql,
-                    entity.getBillId(),
-                    entity.getDrinkId(),
-                    entity.getQuantity(),
-                    entity.getUnitPrice(),
-                    entity.getPrice(),
-                    entity.getBillDetailId()
-            );
+            return JdbcUtil.executeUpdate(sql,
+                    bd.getBillId(),
+                    bd.getDrinkId(),
+                    bd.getQuantity(),
+                    bd.getUnitPrice(),
+                    bd.getPrice(),
+                    bd.getBillDetailId());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
-    @Override
-    public void delete(Integer id) {
-        String sql = "DELETE FROM BillDetails WHERE billDetailId = ?";
+    public int delete(int id) {
+        String sql = "DELETE FROM BillDetails WHERE billDetailId=?";
         try {
-            JdbcUtil.executeUpdate(sql, id);
+            return JdbcUtil.executeUpdate(sql, id);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return 0;
     }
 
-    @Override
     public List<BillDetail> findAll() {
         List<BillDetail> list = new ArrayList<>();
         String sql = "SELECT * FROM BillDetails";
@@ -60,15 +57,14 @@ public class BillDetailDAO implements CrudDAO<BillDetail, Integer> {
         try {
             ResultSet rs = JdbcUtil.executeQuery(sql);
             while (rs.next()) {
-                BillDetail bd = new BillDetail(
+                list.add(new BillDetail(
                         rs.getInt("billDetailId"),
                         rs.getInt("billId"),
                         rs.getInt("drinkId"),
                         rs.getInt("quantity"),
                         rs.getBigDecimal("unitPrice"),
                         rs.getBigDecimal("price")
-                );
-                list.add(bd);
+                ));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,9 +72,8 @@ public class BillDetailDAO implements CrudDAO<BillDetail, Integer> {
         return list;
     }
 
-    @Override
-    public BillDetail findById(Integer id) {
-        String sql = "SELECT * FROM BillDetails WHERE billDetailId = ?";
+    public BillDetail findById(int id) {
+        String sql = "SELECT * FROM BillDetails WHERE billDetailId=?";
         try {
             ResultSet rs = JdbcUtil.executeQuery(sql, id);
             if (rs.next()) {
